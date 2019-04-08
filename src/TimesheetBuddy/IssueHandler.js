@@ -19,7 +19,7 @@ define(['StatCalculator'], function(StatCalculator) {
 
   getDataWithJSON = function(callback, username, password, requestUrl) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://cors-anywhere.herokuapp.com/" + requestUrl)
+    xhr.open("GET", "https://cors-anywhere.herokuapp.com/" + requestUrl);
     if (this.username !== "") {
       this.setAuthorizationHeader(xhr, username, password);
     }
