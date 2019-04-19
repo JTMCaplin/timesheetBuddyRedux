@@ -2,25 +2,10 @@ import { LOGIN_PRESSED } from "./actions";
 import { getDataWithJSON } from "../../utils/connectionUtils";
 import responseData from "../../userData";
 
-function getUserData(responseData, user) {
-  return responseData.issues.filter(function(issue) {
-    for (var j = 0; j < issue.changelog.histories.length; j++) {
-      var change = issue.changelog.histories[j];
-      for (var i = 0; i < change.items.length; i++) {
-        if (change.items[i].field == "assignee") {
-          if (change.items[i].from == user) return true;
-          if (change.items[i].to == user) return true;
-        }
-      }
-    }
-    return false;
-  });
-}
-
 const middleware = store => next => action => {
   if (action.type === LOGIN_PRESSED) {
     const { url, username, password, projects, user } = action;
-    processResponse()
+    processResponse();
 
     // getDataWithJSON(
     //   response => {
@@ -38,9 +23,7 @@ const middleware = store => next => action => {
     //       .join(" OR ") +
     //     ") &maxResults=1000&expand=changelog"
     // );
-
   }
-
 };
 
 function processResponse(response, user) {
@@ -48,43 +31,7 @@ function processResponse(response, user) {
   // const userData = getUserData(responseData, user);
   const userData = responseData;
 
-  userData.map(jira => {
-    return processJira(jira, user)
-  });
-
   debugger;
 }
 
-function getInitialAssigned(jira) {
-  for(let i = 0 ; i < histories.length; i++ ){
-    const items = histories[i].items;
-
-    for(let j =0; j< items.length; j++ ){
-      const item = items[j];
-        if(item.field === "assignee"){
-          return item.from;
-      }
-    }
-  }
-}
-
-function processJira(jira, user){
-  const histories = jira.changelog.histories;
-  let currentStatus;
-  let currentAssignee = getInitialAssigned(jira);
-
-  for(let i = 0 ; i < histories.length; i++ ){
-    const items = histories[i].items;
-
-    for(let j =0; j< items.length; j++ ){
-        const item = items[j];
-        switch(items[j].field){
-          case "status":
-            currentStatus = item.toString;
-          case "assignee":
-            currentAssignee = item.to;
-        }
-    }
-  }
-}
 export default middleware;
