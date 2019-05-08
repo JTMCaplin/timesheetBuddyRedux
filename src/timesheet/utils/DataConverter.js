@@ -3,6 +3,15 @@ import { deflateSync } from "zlib";
 export default class DataConverter {
   constructor() {}
 
+  processDataForDay(data, day) {
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < data[i].length; j++) {
+        const row = data[i][j];
+        const hours = this.hoursOnDay(day, row.startTime, row.endTime);
+      }
+    }
+  }
+
   hoursOnDay(day, startTime, endTime) {
     const oneDay = 24 * 60 * 60 * 1000;
     const oneHour = 60 * 60 * 1000;

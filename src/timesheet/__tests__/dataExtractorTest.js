@@ -294,6 +294,7 @@ describe("Data Extractor Tests", () => {
   it("adds up times where assignee field was set to the same as before", () => {});
 
   it("extract data works for generic data", () => {
+    const data = responseData;
     const events = dataExtractor.extractData(responseData, "jacobm");
 
     debugger;
