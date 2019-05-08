@@ -276,16 +276,17 @@ describe("Data Extractor Tests", () => {
 
   it("processJira works for generic data", () => {
     const data = responseData;
-    const events = dataExtractor.processJira(
-      responseData[0].changelog.histories,
-      "jacobm"
-    );
+    const events = dataExtractor.processJira(responseData[0], "jacobm");
 
     assert.deepStrictEqual(events, [
       {
         status: "In Progress: QA/Test",
         startTime: new Date("2019-03-15T09:24:45.000+0000"),
-        endTime: new Date("2019-03-15T14:49:21.000+0000")
+        endTime: new Date("2019-03-15T14:49:21.000+0000"),
+        jira: {
+          summary: "Order Fill window fails to open in Danish locale",
+          timesheetCode: null
+        }
       }
     ]);
   });
@@ -300,19 +301,24 @@ describe("Data Extractor Tests", () => {
 
   it("process Jira returns empty when it's empty", () => {
     const events = dataExtractor.processJira(
-      [
-        {
-          items: [{ field: "assignee", from: null }]
-        }
-      ],
+      {
+        changelog: {
+          histories: [
+            {
+              items: [{ field: "assignee", from: null }]
+            }
+          ]
+        },
+        fields: {}
+      },
       "assignee"
     );
 
     assert.deepStrictEqual(events, []);
   });
 
-  it("Handy debugger", () => {
-    const userData = responseData;
-    debugger;
-  });
+  // it("Handy debugger", () => {
+  //   const userData = responseData;
+  //   debugger;
+  // });
 });

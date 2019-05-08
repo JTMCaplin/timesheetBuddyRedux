@@ -21,7 +21,7 @@ export default class DataExtractor {
   extractData(data, user) {
     // const userData = this.getUserData(data, user);
     return data.map(jira => {
-      return this.processJira(jira.changelog.histories, user);
+      return this.processJira(jira, user);
     });
   }
 
@@ -137,7 +137,8 @@ export default class DataExtractor {
     });
   }
 
-  processJira(histories, user) {
+  processJira(jira, user) {
+    const histories = jira.changelog.histories;
     let currentStatus = this.getInitialField(histories, "status");
     let currentStatusStart = new Date(histories[0].created);
     let currentAssignee = this.getInitialField(histories, "assignee");
@@ -145,6 +146,10 @@ export default class DataExtractor {
 
     let newStatus, newStatusStart, newAssignee, newAssigneeStart;
 
+    const jiraSum = {
+      timesheetCode: jira.fields.customfield_11670,
+      summary: jira.fields.summary
+    };
     const rows = [];
 
     for (let i = 0; i < histories.length; i++) {
@@ -188,6 +193,11 @@ export default class DataExtractor {
         }
       }
     }
-    return rows;
+    return rows.map(row => {
+      return {
+        ...row,
+        jira: jiraSum
+      };
+    });
   }
 }
