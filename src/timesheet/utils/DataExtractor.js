@@ -27,10 +27,10 @@ export default class DataExtractor {
     });
   }
 
-  extractData(data, user) {
+  extractData(data, user, stories, epics) {
     // const userData = this.getUserData(data, user);
     return data.map(jira => {
-      return this.processJira(jira, user);
+      return this.processJira(jira, user, stories, epics);
     });
   }
 
@@ -146,7 +146,7 @@ export default class DataExtractor {
     });
   }
 
-  processJira(jira, user) {
+  processJira(jira, user, stories, epics) {
     const histories = jira.changelog.histories;
     let currentStatus = this.getInitialField(histories, "status");
     let currentStatusStart = new Date(histories[0].created);
@@ -155,11 +155,34 @@ export default class DataExtractor {
 
     let newStatus, newStatusStart, newAssignee, newAssigneeStart;
 
+    let epicCode, storyCode, storyEpicCode;
+
+    if ( jira.fields.customfield_10870) {
+      const epic = epics[jira.fields.customfield_10870];
+      if ( epic){
+        epicCode = epic.fields.customfield_11670;
+      }
+    }
+
+    if ( jira.fields.issuetype.subtask){
+      const story = stories[jira.fields.parent.key];
+      if ( story){
+        storyCode = story.fields.customfield_11670;
+      }
+      if ( story && story.fields.customfield_10870){
+        const storyEpic = epics[story.fields.customfield_10870];
+        storyEpicCode = storyEpic.fields.customfield_11670;
+      }
+    }
+
     const jiraSum = {
       timesheetCode: jira.fields.customfield_11670,
       summary: jira.fields.summary,
       id: jira.key,
-      epic: jira.fields.customfield_10870
+      epic: jira.fields.customfield_10870,
+      epicCode,
+      storyCode,
+      storyEpicCode
     };
     const rows = [];
 
