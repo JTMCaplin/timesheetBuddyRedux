@@ -284,6 +284,8 @@ describe("Data Extractor Tests", () => {
         startTime: new Date("2019-03-15T09:24:45.000+0000"),
         endTime: new Date("2019-03-15T14:49:21.000+0000"),
         jira: {
+          epic: null,
+          id: "PTGUI-41",
           summary: "Order Fill window fails to open in Danish locale",
           timesheetCode: null
         }

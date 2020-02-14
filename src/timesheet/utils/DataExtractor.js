@@ -1,7 +1,16 @@
-import { trackedStatuses } from "./statuses";
+const inQa = "In Progress: QA/Test";
+const inDev = "In Progress: Development";
+const inDev2 = "In Development";
+const inProg = "In Progress";
+const codeReview = "Code Review";
 
+const trackedStatuses = [inQa, inDev, inDev2, inProg, codeReview];
+
+// export default class DataExtractor {
 export default class DataExtractor {
-  constructor() {}
+  constructor(currentTime) {
+    this.currentTime = currentTime;
+  }
 
   getUserData(responseData, user) {
     return responseData.issues.filter(function(issue) {
@@ -148,7 +157,9 @@ export default class DataExtractor {
 
     const jiraSum = {
       timesheetCode: jira.fields.customfield_11670,
-      summary: jira.fields.summary
+      summary: jira.fields.summary,
+      id: jira.key,
+      epic: jira.fields.customfield_10870
     };
     const rows = [];
 
@@ -193,6 +204,18 @@ export default class DataExtractor {
         }
       }
     }
+
+    this.addRowNewAssignee(
+      rows,
+      user,
+      currentAssignee,
+      currentAssigneeStart,
+      currentStatus,
+      currentStatusStart,
+      null,
+      this.currentTime
+    );
+
     return rows.map(row => {
       return {
         ...row,

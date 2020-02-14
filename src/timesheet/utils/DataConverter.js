@@ -1,15 +1,32 @@
-import { deflateSync } from "zlib";
-
 export default class DataConverter {
   constructor() {}
 
   processDataForDay(data, day) {
+    const hoursForCodes = new Map();
+
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < data[i].length; j++) {
         const row = data[i][j];
         const hours = this.hoursOnDay(day, row.startTime, row.endTime);
+        let code = row.jira.timesheetCode;
+        if (!code) {
+          code = "jirasWithoutCodes";
+        }
+        if (hours > 0.08) {
+          if (!hoursForCodes.get(code)) {
+            hoursForCodes.set(code, []);
+          }
+          hoursForCodes.get(code).push({
+            hours,
+            jira: row.jira,
+            startTime: row.startTime,
+            endTime: row.endTime
+          });
+        }
       }
     }
+
+    return hoursForCodes;
   }
 
   hoursOnDay(day, startTime, endTime) {
